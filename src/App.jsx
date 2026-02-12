@@ -15,7 +15,14 @@ import {
   Check,
   Menu,
   X,
-  Code2
+  Code2,
+  List,
+  Box,
+  Braces,
+  GitBranch,
+  Rocket,
+  Timer,
+  Network
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -28,9 +35,21 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const navItems = [
+    { label: 'Fonctionnalités', href: '#fonctionnalités' },
+    { label: 'Apprendre', href: '#apprendre' },
+    { label: 'Référence', href: '#référence' },
+    { label: 'Futur', href: '#futur' }
+  ];
+
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 px-6 py-4 ${scrolled ? 'mt-0' : 'mt-4'}`}>
-      <div className={`max-w-7xl mx-auto flex justify-between items-center px-6 py-3 rounded-2xl transition-all duration-500 ${scrolled ? 'glass h-16' : 'bg-transparent'}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-700 px-6 py-4 ${scrolled ? 'mt-0' : 'mt-4'}`}>
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className={`max-w-7xl mx-auto flex justify-between items-center px-6 py-3 rounded-2xl transition-all duration-500 ${scrolled ? 'glass h-16' : 'bg-transparent border border-transparent'}`}
+      >
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -42,13 +61,13 @@ const Navbar = () => {
               B
             </div>
           </div>
-          <span className="text-2xl font-black tracking-tighter text-white">BHILAL</span>
+          <span className="text-2xl font-black tracking-tighter text-white uppercase sm:block hidden">BHILAL</span>
         </motion.div>
         
-        <div className="hidden md:flex gap-10 items-center text-[13px] font-bold tracking-widest uppercase text-slate-400">
-          {['Fonctionnalités', 'Apprendre', 'Référence', 'Futur'].map((item) => (
-            <a key={item} href={`#${item.toLowerCase()}`} className="hover:text-bhilal-accent transition-all hover:scale-105">
-              {item}
+        <div className="hidden md:flex gap-10 items-center text-[11px] font-black tracking-[0.2em] uppercase text-slate-400">
+          {navItems.map((item) => (
+            <a key={item.label} href={item.href} className="hover:text-bhilal-accent transition-all hover:scale-105">
+              {item.label}
             </a>
           ))}
         </div>
@@ -59,15 +78,15 @@ const Navbar = () => {
             whileTap={{ scale: 0.95 }}
             href="https://github.com/7Bhil/Language-Bhilal." 
             target="_blank" 
-            className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 hover:bg-white/5 transition-colors text-sm font-bold"
+            className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 hover:bg-white/5 transition-colors text-xs font-black tracking-widest uppercase"
           >
-            <Github size={18} />
+            <Github size={16} />
             <span>GitHub</span>
           </motion.a>
           <motion.button 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="px-6 py-2.5 rounded-xl bg-white text-black text-sm font-black shadow-xl shadow-white/5 hover:bg-bhilal-accent transition-colors"
+            className="px-6 py-2.5 rounded-xl bg-white text-black text-xs font-black tracking-widest uppercase shadow-xl shadow-white/5 hover:bg-bhilal-accent transition-colors"
           >
             DÉMARRER
           </motion.button>
@@ -79,7 +98,7 @@ const Navbar = () => {
             {mobileMenuOpen ? <X /> : <Menu />}
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Mobile Menu */}
       <AnimatePresence>
@@ -90,9 +109,9 @@ const Navbar = () => {
             exit={{ opacity: 0, y: -20 }}
             className="absolute top-24 left-6 right-6 glass p-8 rounded-3xl md:hidden flex flex-col gap-6 text-center"
           >
-            {['Fonctionnalités', 'Apprendre', 'Référence', 'Futur'].map((item) => (
-              <a key={item} href="#" className="text-xl font-bold hover:text-bhilal-accent" onClick={() => setMobileMenuOpen(false)}>
-                {item}
+            {navItems.map((item) => (
+              <a key={item.label} href={item.href} className="text-xl font-bold hover:text-bhilal-accent uppercase tracking-widest" onClick={() => setMobileMenuOpen(false)}>
+                {item.label}
               </a>
             ))}
           </motion.div>
@@ -102,20 +121,8 @@ const Navbar = () => {
   );
 };
 
-const CodeBlock = () => {
+const CodeBlock = ({ code, language = "bhilal", title = "exemple.bh" }) => {
   const [copied, setCopied] = useState(false);
-  const code = `classe Robot {
-  prive fonction secret() {
-    montre("Chut...")
-  }
-
-  public fonction direSalut(nom) {
-    montre("Salut " + nom)
-  }
-}
-
-soit monRobot = nouveau Robot()
-monRobot.direSalut("Bhilal")`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(code);
@@ -123,57 +130,101 @@ monRobot.direSalut("Bhilal")`;
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const highlight = (text) => {
+    // Basic highlighter for Bhilal
+    const tokens = [
+      { regex: /\b(classe|fonction|soit|si|sinon|tantque|renvoie|nouveau|prive|public|abstrait|interface|inclure|essaye|attrape|lance)\b/g, color: 'text-bhilal-accent' },
+      { regex: /\b(montre|entre|longueur|aleatoire|min|max|croissant|decroissant|date|execute|lire|ecrire)\b/g, color: 'text-purple-400' },
+      { regex: /("[^"]*")/g, color: 'text-emerald-400' },
+      { regex: /(\b[0-9]+\b)/g, color: 'text-amber-400' },
+      { regex: /#.*/g, color: 'text-slate-600 italic' },
+    ];
+
+    let highlighted = text;
+    // This is a very crude way to highlight but works for doc examples
+    // We'll just wrap them in spans
+    return <span dangerouslySetInnerHTML={{ __html: text
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/\b(classe|fonction|soit|si|sinon|tantque|renvoie|nouveau|prive|public|abstrait|interface|inclure|essaye|attrape|lance)\b/g, '<span class="text-bhilal-accent font-bold italic">$1</span>')
+      .replace(/\b(montre|entre|longueur|aleatoire|min|max|croissant|decroissant|date|execute|lire|ecrire)\b/g, '<span class="text-purple-400">$1</span>')
+      .replace(/("[^"]*")/g, '<span class="text-emerald-400">$1</span>')
+      .replace(/(\b[0-9]+\b)/g, '<span class="text-amber-400">$1</span>')
+      .replace(/(#.*)/g, '<span class="text-slate-600 italic">$1</span>')
+    }} />;
+  };
+
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-      viewport={{ once: true }}
-      className="relative group w-full"
-    >
-      <div className="absolute -inset-4 bg-gradient-to-r from-bhilal-accent/20 to-purple-500/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000 -z-10"></div>
-      <div className="glass p-1 rounded-[2rem] shadow-2xl backdrop-blur-3xl border-white/5 overflow-hidden">
-        <div className="bg-bhilal-dark/80 rounded-[1.8rem] overflow-hidden border border-white/10">
-          <div className="px-6 py-4 bg-white/[0.03] flex justify-between items-center border-b border-white/5">
-            <div className="flex gap-2.5">
-              <div className="w-3.5 h-3.5 rounded-full bg-red-500/40 border border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.2)]"></div>
-              <div className="w-3.5 h-3.5 rounded-full bg-yellow-500/40 border border-yellow-500/20 shadow-[0_0_10px_rgba(234,179,8,0.2)]"></div>
-              <div className="w-3.5 h-3.5 rounded-full bg-green-500/40 border border-green-500/20 shadow-[0_0_10px_rgba(34,197,94,0.2)]"></div>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-[11px] text-slate-500 font-mono tracking-widest uppercase">bhilal-interpreter — v10.0</span>
-              <button 
-                onClick={copyToClipboard}
-                className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400 hover:text-white"
-              >
-                {copied ? <Check size={16} className="text-green-400" /> : <Copy size={16} />}
-              </button>
-            </div>
-          </div>
-          <div className="p-8 font-mono text-[15px] leading-relaxed overflow-x-auto whitespace-pre">
-            <div className="flex gap-6">
-              <div className="text-slate-700 text-right select-none pr-4 border-r border-white/5 flex flex-col">
-                {[1,2,3,4,5,6,7,8,9,10,11,12].map(n => <span key={n}>{n}</span>)}
-              </div>
-              <code className="text-slate-300">
-                <span className="text-bhilal-accent font-bold italic">classe</span> <span className="text-white font-bold">Robot</span> {"{"} <br />
-                &nbsp;&nbsp;<span className="text-bhilal-accent italic">prive fonction</span> <span className="text-blue-400">secret</span>() {"{"} <br />
-                &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-purple-400">montre</span>(<span className="text-emerald-400">"Chut..."</span>) <br />
-                &nbsp;&nbsp;{"}"} <br />
-                <br />
-                &nbsp;&nbsp;<span className="text-bhilal-accent italic">public fonction</span> <span className="text-blue-400">direSalut</span>(nom) {"{"} <br />
-                &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-purple-400">montre</span>(<span className="text-emerald-400">"Salut "</span> + nom) <br />
-                &nbsp;&nbsp;{"}"} <br />
-                {"}"} <br />
-                <br />
-                <span className="text-bhilal-accent italic">soit</span> monRobot = <span className="text-bhilal-accent italic">nouveau</span> <span className="text-white font-bold">Robot</span>() <br />
-                monRobot.<span className="text-blue-400">direSalut</span>(<span className="text-emerald-400">"Bhilal"</span>)
-              </code>
-            </div>
-          </div>
+    <div className="glass p-1 rounded-3xl overflow-hidden border-white/5 bg-bhilal-dark/40 shadow-2xl">
+      <div className="px-6 py-3 bg-white/[0.03] flex justify-between items-center border-b border-white/5">
+        <div className="flex gap-2">
+           <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/40"></div>
+           <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/40"></div>
+           <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/40"></div>
+           <span className="ml-3 text-[10px] text-slate-500 font-mono tracking-widest uppercase">{title}</span>
         </div>
+        <button onClick={copyToClipboard} className="text-slate-500 hover:text-white transition-colors">
+          {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+        </button>
       </div>
-    </motion.div>
+      <div className="p-6 font-mono text-sm leading-relaxed overflow-x-auto whitespace-pre">
+        {highlight(code)}
+      </div>
+    </div>
+  );
+};
+
+const SectionHeader = ({ badge, title, description, center = false }) => (
+  <div className={`mb-20 ${center ? 'text-center' : ''}`}>
+    <motion.span 
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      className={`text-bhilal-accent font-black tracking-[0.3em] uppercase text-[10px] mb-4 block ${center ? 'mx-auto' : ''}`}
+    >
+      {badge}
+    </motion.span>
+    <motion.h2 
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      className="text-4xl lg:text-6xl font-black mb-8 tracking-tighter leading-tight"
+    >
+      {title}
+    </motion.h2>
+    <motion.p 
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.1 }}
+      className={`text-slate-400 max-w-2xl text-lg leading-relaxed font-light ${center ? 'mx-auto' : ''}`}
+    >
+      {description}
+    </motion.p>
+  </div>
+);
+
+const Features = () => {
+  const features = [
+    { icon: Zap, title: "Performance Node", description: "Bhilal exploite la puissance de Node.js avec un moteur d'interprétation optimisé pour des temps de réponse instantanés." },
+    { icon: ShieldCheck, title: "Encapsulation Forte", description: "Gérez la visibilité de vos membres avec 'prive' et 'public'. Une structure objet robuste pour des architectures sécurisées." },
+    { icon: Layers, title: "Modularité Native", description: "Organisez vos projets complexes avec le système de modules 'inclure'. Partagez et réutilisez votre logique facilement." },
+    { icon: Globe, title: "Playground Web", description: "Une intégration parfaite avec le navigateur. Testez, partagez et exécutez votre code Bhilal partout sans installation." },
+    { icon: Cpu, title: "Bas-Niveau & Système", description: "Exécutez des commandes système et gérez les fichiers localement avec des fonctions intégrées sécurisées." },
+    { icon: Code2, title: "Syntaxe Intuitive", description: "Une syntaxe pure en français, pensée pour éliminer les barrières d'apprentissage tout en restant techniquement puissante." }
+  ];
+
+  return (
+    <section id="fonctionnalités" className="py-32 px-6 max-w-7xl mx-auto relative">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-bhilal-accent/5 blur-[150px] -z-10 rounded-full"></div>
+      <SectionHeader 
+        badge="L'Écosystème"
+        title="Pensé pour les bâtisseurs."
+        description="Bhilal n'est pas qu'un langage, c'est une boîte à outils complète pour transformer vos idées en réalité technique."
+        center
+      />
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+        {features.map((f, i) => (
+          <FeatureCard key={f.title} icon={f.icon} title={f.title} description={f.description} delay={i * 0.1} />
+        ))}
+      </div>
+    </section>
   );
 };
 
@@ -202,46 +253,131 @@ const FeatureCard = ({ icon: Icon, title, description, delay }) => (
   </motion.div>
 );
 
-const Features = () => {
-  const features = [
-    { icon: Zap, title: "Performance Node", description: "Bhilal exploite la puissance de Node.js avec un moteur d'interprétation optimisé pour des temps de réponse instantanés." },
-    { icon: ShieldCheck, title: "Encapsulation Forte", description: "Gérez la visibilité de vos membres avec 'prive' et 'public'. Une structure objet robuste pour des architectures sécurisées." },
-    { icon: Layers, title: "Modularité Native", description: "Organisez vos projets complexes avec le système de modules 'inclure'. Partagez et réutilisez votre logique facilement." },
-    { icon: Globe, title: "Playground Web", description: "Une intégration parfaite avec le navigateur. Testez, partagez et exécutez votre code Bhilal partout sans installation." },
-    { icon: Cpu, title: "Bas-Niveau & Système", description: "Exécutez des commandes système et gérez les fichiers localement avec des fonctions intégrées sécurisées." },
-    { icon: Code2, title: "Syntaxe Intuitive", description: "Une syntaxe pure en français, pensée pour éliminer les barrières d'apprentissage tout en restant techniquement puissante." }
+const Apprendre = () => {
+  const codes = [
+    { title: "Variables & Logique", code: `soit age = 20\nsi (age >= 18) {\n  montre("majeur")\n} sinon {\n  montre("mineur")\n}` },
+    { title: "Fonctions", code: `fonction addition(a, b) {\n  renvoie a + b\n}\n\nsoit res = addition(10, 5)\nmontre("Le résultat est :", res)` },
+    { title: "Listes & Boucles", code: `soit fruits = ["pomme", "banane"]\ntantque longueur(fruits) > 0 {\n  montre("Fruit :", fruits[0])\n  # ... logique de retrait\n}` }
   ];
 
   return (
-    <section id="fonctionnalités" className="py-32 px-6 max-w-7xl mx-auto relative">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-bhilal-accent/5 blur-[150px] -z-10 rounded-full"></div>
-      <div className="text-center mb-24">
-        <motion.span 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          className="text-bhilal-accent font-black tracking-[0.3em] uppercase text-xs mb-4 block"
-        >
-          L'Écosystème
-        </motion.span>
-        <motion.h2 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          className="text-4xl lg:text-6xl font-black mb-8 tracking-tighter"
-        >
-          Pensé pour les bâtisseurs.
-        </motion.h2>
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed font-light"
-        >
-          Bhilal n'est pas qu'un langage, c'est une boîte à outils complète pour transformer vos idées en réalité technique.
-        </motion.p>
+    <section id="apprendre" className="py-32 px-6 max-w-7xl mx-auto border-t border-white/5">
+      <div className="grid lg:grid-cols-2 gap-20 items-center">
+        <div>
+          <SectionHeader 
+            badge="Apprendre"
+            title="La simplicité comme pilier."
+            description="Bhilal utilise une syntaxe familière et intuitive. Adieu les barrières linguistiques, bonjour la productivité immédiate."
+          />
+          <div className="space-y-8">
+            <div className="flex gap-6 items-start">
+               <div className="w-10 h-10 rounded-full glass flex items-center justify-center shrink-0 border-bhilal-accent/30 text-bhilal-accent">1</div>
+               <div>
+                  <h4 className="text-xl font-bold mb-2">Assignation Intuitive</h4>
+                  <p className="text-slate-400 font-light">Utilisez 'soit' pour déclarer vos variables. Simple, clair, efficace.</p>
+               </div>
+            </div>
+            <div className="flex gap-6 items-start">
+               <div className="w-10 h-10 rounded-full glass flex items-center justify-center shrink-0 border-bhilal-accent/30 text-bhilal-accent">2</div>
+               <div>
+                  <h4 className="text-xl font-bold mb-2">Blocs Modernes</h4>
+                  <p className="text-slate-400 font-light">Des accolades { } traditionnelles pour une structure de code que vous connaissez déjà.</p>
+               </div>
+            </div>
+          </div>
+        </div>
+        <div className="space-y-6">
+          {codes.map((c, i) => (
+            <motion.div 
+              key={c.title}
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.2 }}
+              viewport={{ once: true }}
+            >
+              <CodeBlock code={c.code} title={c.title} />
+            </motion.div>
+          ))}
+        </div>
       </div>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-        {features.map((f, i) => (
-          <FeatureCard key={f.title} {...f} delay={i * 0.1} />
+    </section>
+  );
+};
+
+const Reference = () => {
+  const libs = [
+    { name: "lire(chemin)", desc: "Lit un fichier texte et renvoie son contenu." },
+    { name: "ecrire(ch, txt)", desc: "Écrit du texte dans un fichier spécifié." },
+    { name: "aleatoire(m, M)", desc: "Génère un nombre entier aléatoire." },
+    { name: "longueur(v)", desc: "Taille d'une liste ou d'une chaîne." },
+    { name: "execute(cmd)", desc: "Exécute une commande système brute." },
+    { name: "date()", desc: "Renvoie l'horodatage système actuel." }
+  ];
+
+  return (
+    <section id="référence" className="py-32 px-6 max-w-7xl mx-auto border-t border-white/5">
+      <SectionHeader 
+        badge="Référence API"
+        title="Une boîte à outils complète."
+        description="Bhilal arrive avec une bibliothèque standard riche pour gérer le système, les fichiers et les données."
+        center
+      />
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {libs.map((lib, i) => (
+          <motion.div 
+            key={lib.name}
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.05 }}
+            className="glass p-8 rounded-3xl group hover:border-bhilal-accent/30 transition-all cursor-default"
+          >
+            <div className="text-bhilal-accent font-mono font-bold text-lg mb-2 group-hover:scale-105 origin-left transition-transform">{lib.name}</div>
+            <p className="text-slate-500 text-sm font-light leading-relaxed">{lib.desc}</p>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+const Futur = () => {
+  const steps = [
+    { icon: Network, phase: "Phase 1", title: "Connectivité (V11)", items: ["Support HTTP/REST (requête)", "Analyse JSON native"] },
+    { icon: Timer, phase: "Phase 2", title: "Performance (V12)", items: ["Asynchronisme (async/attendre)", "Compilation JIT optimisée"] },
+    { icon: Box, phase: "Phase 3", title: "Écosystème (V13)", items: ["Bhilal Package Manager (BPM)", "Bibliothèque graphique native"] },
+    { icon: ShieldCheck, phase: "Phase 4", title: "Typage & Sécurité (V14)", items: ["Types statiques optionnels", "Sandbox sécurisée"] }
+  ];
+
+  return (
+    <section id="futur" className="py-32 px-6 max-w-7xl mx-auto border-t border-white/5 relative">
+      <div className="absolute bottom-0 right-0 w-64 h-64 bg-bhilal-accent/10 blur-[100px] -z-10 rounded-full"></div>
+      <SectionHeader 
+        badge="Feuille de Route"
+        title="Vers l'infini et au-delà."
+        description="Le développement de Bhilal ne s'arrête jamais. Découvrez les prochaines révolutions prévues."
+      />
+      
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {steps.map((s, i) => (
+          <motion.div 
+            key={s.title}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+            className="relative p-8 rounded-[2rem] glass-morphism border-white/5 hover:bg-white/[0.03] transition-colors"
+          >
+            <div className="text-bhilal-accent mb-6"><s.icon size={28} /></div>
+            <div className="text-[10px] font-black tracking-widest text-slate-500 uppercase mb-2">{s.phase}</div>
+            <h4 className="text-xl font-bold mb-6">{s.title}</h4>
+            <ul className="space-y-3">
+              {s.items.map(item => (
+                <li key={item} className="text-slate-500 text-sm flex gap-2 items-start">
+                  <span className="w-1.5 h-1.5 rounded-full bg-bhilal-accent mt-1.5 shrink-0"></span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
         ))}
       </div>
     </section>
@@ -279,7 +415,7 @@ const App = () => {
 
       <main>
         {/* HERO SECTION */}
-        <section className="relative min-h-screen flex flex-col justify-center items-center px-6 pt-32 pb-20 max-w-7xl mx-auto overflow-hidden">
+        <section className="relative min-h-[90vh] flex flex-col justify-center items-center px-6 pt-32 pb-20 max-w-7xl mx-auto overflow-hidden">
           <div className="grid lg:grid-cols-2 gap-20 items-center w-full">
             <div className="text-center lg:text-left z-10">
               <motion.div
@@ -317,15 +453,17 @@ const App = () => {
                   <Play size={22} fill="currentColor" />
                   COMMANDER
                 </button>
-                <button className="px-10 py-5 rounded-2xl glass font-black text-lg hover:bg-white/5 transition-all flex items-center gap-3">
+                <a href="#apprendre" className="px-10 py-5 rounded-2xl glass font-black text-lg hover:bg-white/5 transition-all flex items-center gap-3">
                   <BookOpen size={22} />
                   APPRENDRE
-                </button>
+                </a>
               </motion.div>
             </div>
 
             <div className="relative">
-              <CodeBlock />
+              <CodeBlock 
+                code={`classe Robot {\n  prive fonction secret() {\n    montre("Chut...")\n  }\n\n  public fonction direSalut(nom) {\n    montre("Salut " + nom)\n  }\n}\n\nsoit monRobot = nouveau Robot()\nmonRobot.direSalut("Bhilal")`} 
+              />
               <motion.div 
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -347,6 +485,8 @@ const App = () => {
         </section>
 
         <Features />
+        
+        <Apprendre />
 
         {/* STATS SECTION */}
         <section className="py-32 px-6">
@@ -366,6 +506,10 @@ const App = () => {
              </div>
           </div>
         </section>
+
+        <Reference />
+
+        <Futur />
       </main>
 
       <footer className="py-32 border-t border-white/5 px-6 mt-20 relative bg-bhilal-dark/50 backdrop-blur-3xl">
@@ -376,29 +520,29 @@ const App = () => {
                 <div className="w-8 h-8 rounded-lg bg-white text-black flex items-center justify-center font-black text-sm">B</div>
                 <span className="font-black text-xl tracking-tighter">BHILAL</span>
               </div>
-              <p className="text-slate-400 max-w-sm leading-relaxed font-light">
+              <p className="text-slate-400 max-w-sm leading-relaxed font-light text-sm">
                 Le futur de la programmation est accessible. Rejoignez l'écosystème Bhilal et commencez à bâtir l'avenir dès aujourd'hui.
               </p>
             </div>
             <div>
               <h4 className="font-black text-white mb-8 uppercase tracking-widest text-xs">Langage</h4>
               <ul className="flex flex-col gap-4 text-slate-500 text-sm font-medium">
-                <li className="hover:text-bhilal-accent cursor-pointer transition-colors">Documentation</li>
+                <li><a href="#apprendre" className="hover:text-bhilal-accent cursor-pointer transition-colors">Documentation</a></li>
+                <li><a href="https://github.com/7Bhil/Language-Bhilal." target="_blank" className="hover:text-bhilal-accent cursor-pointer transition-colors">GitHub</a></li>
                 <li className="hover:text-bhilal-accent cursor-pointer transition-colors">Playground</li>
-                <li className="hover:text-bhilal-accent cursor-pointer transition-colors">Tutoriels</li>
               </ul>
             </div>
             <div>
               <h4 className="font-black text-white mb-8 uppercase tracking-widest text-xs">Communauté</h4>
               <ul className="flex flex-col gap-4 text-slate-500 text-sm font-medium">
-                <li className="hover:text-bhilal-accent cursor-pointer transition-colors">GitHub</li>
+                <li className="hover:text-bhilal-accent cursor-pointer transition-colors">Discord</li>
                 <li className="hover:text-bhilal-accent cursor-pointer transition-colors">Discussions</li>
                 <li className="hover:text-bhilal-accent cursor-pointer transition-colors">Contribution</li>
               </ul>
             </div>
           </div>
           <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="text-slate-600 text-[11px] font-bold tracking-widest uppercase">© 2026 PROJET BHILAL. SOUS LICENCE MIT.</p>
+            <p className="text-slate-600 text-[10px] font-black tracking-[0.2em] uppercase">© 2026 PROJET BHILAL. SOUS LICENCE MIT.</p>
             <div className="flex gap-8">
               <Github size={20} className="text-slate-600 hover:text-white cursor-pointer transition-colors" />
               <Terminal size={20} className="text-slate-600 hover:text-white cursor-pointer transition-colors" />
