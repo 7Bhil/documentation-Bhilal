@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,14 +9,51 @@
 }
 
 body {
-  @apply bg-bhilal-dark text-white font-outfit antialiased selection:bg-bhilal-accent selection:text-black;
+  @apply bg-bhilal-dark text-slate-100 font-outfit antialiased selection:bg-bhilal-accent/30 selection:text-white overflow-x-hidden;
   margin: 0;
 }
 
 .glass {
-  @apply bg-white/5 backdrop-blur-lg border border-white/10;
+  @apply bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] shadow-[0_8px_32px_0_rgba(0,0,0,0.37)];
+}
+
+.glass-morphism {
+  @apply bg-white/[0.01] backdrop-blur-md border border-white/[0.05];
 }
 
 .text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-br from-white via-white to-white/40;
+}
+
+.text-accent-gradient {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-bhilal-accent to-bhilal-accent-2;
+}
+
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-bhilal-dark;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full border-4 border-bhilal-dark hover:bg-white/20 transition-colors;
+}
+
+@layer utilities {
+  .glow-bhilal {
+    box-shadow: 0 0 40px -10px rgba(0, 210, 255, 0.3);
+  }
 }
