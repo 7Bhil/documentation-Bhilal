@@ -40,15 +40,33 @@ const CodeBlock = ({ code, language = "bhilal", title = "exemple.bh" }) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const highlight = (text) => {
-    return <span dangerouslySetInnerHTML={{ __html: text
-      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-      .replace(/\b(classe|fonction|soit|si|sinon|tantque|renvoie|nouveau|prive|public|abstrait|interface|inclure|essaye|attrape|lance|herite)\b/g, '<span class="text-bhilal-accent font-bold italic">$1</span>')
-      .replace(/\b(montre|entre|longueur|aleatoire|min|max|croissant|decroissant|date|execute|lire|ecrire)\b/g, '<span class="text-purple-400">$1</span>')
-      .replace(/("[^"]*")/g, '<span class="text-emerald-400">$1</span>')
-      .replace(/(\b[0-9]+\b)/g, '<span class="text-amber-400">$1</span>')
-      .replace(/(#.*)/g, '<span class="text-slate-600 italic font-light">$1</span>')
-    }} />;
+    const highlight = (text) => {
+    const rules = [
+      { regex: /\b(classe|fonction|soit|si|sinon|tantque|renvoie|nouveau|prive|public|abstrait|interface|inclure|essaye|attrape|lance|herite)\b/g, cls: 'text-bhilal-accent font-bold italic' },
+      { regex: /\b(montre|entre|longueur|aleatoire|min|max|croissant|decroissant|date|execute|lire|ecrire)\b/g, cls: 'text-purple-400' },
+      { regex: /("[^"]*")/g, cls: 'text-emerald-400' },
+      { regex: /(\b[0-9]+\b)/g, cls: 'text-amber-400' },
+      { regex: /(#.*)/g, cls: 'text-slate-600 italic font-light' },
+    ];
+
+    let html = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    
+    // One-pass replacement logic
+    const allRegex = new RegExp(rules.map(r => `(${r.regex.source})`).join('|'), 'g');
+    
+    html = html.replace(allRegex, (match) => {
+      // Find which rule matched. This approach might prioritize rules if there's overlap,
+      // but for distinct token types (keywords, strings, numbers, comments), it should be fine.
+      // A more robust solution for overlapping regexes would involve capturing groups for each rule.
+      for (const rule of rules) {
+        if (rule.regex.test(match)) {
+          return `<span class="${rule.cls}">${match}</span>`;
+        }
+      }
+      return match; // Should not happen if all matches are covered by rules
+    });
+
+    return <span dangerouslySetInnerHTML={{ __html: html }} />;
   };
 
   return (
