@@ -58,7 +58,7 @@ const App = () => {
         )}
       </AnimatePresence>
 
-      <Navbar onOpenDocs={() => setShowDocs(true)} resetFirstOpen={resetFirstOpen} />
+      {!showDocs && <Navbar onOpenDocs={() => setShowDocs(true)} resetFirstOpen={resetFirstOpen} />}
 
       <main>
         <Hero onOpenDocs={() => setShowDocs(true)} resetFirstOpen={resetFirstOpen} />
